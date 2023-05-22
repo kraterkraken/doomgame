@@ -1,4 +1,6 @@
 import math
+import pygame
+
 from Settings import *
 from Game import *
 
@@ -9,14 +11,28 @@ class Player:
         self.y = PLAYER_START_Y
         self.heading = 5 * math.pi / 180 # angle in CLOCKWISE radians that player is facing
 
-    def move(self, rel_angle):
-        # Moves the player in the direction given by the 
-        # relative angle (rel_angle). Heading remains unchanged.
 
+    def update(self):
         distance = PLAYER_VELOCITY * self.game.delta_t
-        angle = self.heading + rel_angle
-        self.x = self.x + distance * math.cos(angle)
-        self.y = self.y + distance * math.sin(angle)
+        a = distance * math.cos(self.heading)
+        b = distance * math.sin(self.heading)
+
+        keys = pygame.key.get_pressed()
+        if keys[MOVE_LEFT]:
+            self.move(b, -a)
+        if keys[MOVE_RIGHT]:
+            self.move(-b, a)
+        if keys[MOVE_AHEAD]:
+            self.move(a, b)
+        if keys[MOVE_BACK]:
+            self.move(-a, -b)
+
+
+    def move(self, delta_x, delta_y):
+        # Moves the player in the x,y distances given
+        self.x += delta_x
+        self.y += delta_y
+
 
     def rotate(self, mouse_delta_x):
         angle = mouse_delta_x * math.pi/180

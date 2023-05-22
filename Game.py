@@ -7,19 +7,6 @@ from Player import *
 
 TOPDOWN = True
 
-# with y in the down direction, angles are measured
-# clockwise, so left isn't pi/2, it's 3pi/2.
-LEFT = 3*math.pi/2
-RIGHT = math.pi/2
-AHEAD = 0
-BACKWARDS = math.pi
-DIRECTION = {
-    pygame.K_a: LEFT,
-    pygame.K_d: RIGHT,
-    pygame.K_w: AHEAD,
-    pygame.K_s: BACKWARDS
-}
-
 class Game:
     def __init__(self):
         # pygame setup
@@ -37,17 +24,15 @@ class Game:
         # poll for events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # pygame.QUIT event means the user clicked X to close your window
-                self.running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key in DIRECTION.keys():
-                    self.player.move(DIRECTION[event.key])
+                self.running = False # pygame.QUIT event means the user clicked X to close your window
+
             elif event.type == pygame.MOUSEMOTION:
                 delta_x = event.rel[0]
                 self.player.rotate(delta_x)
 
     def update(self):
-        pass
+        self.delta_t = self.clock.tick(FRAME_RATE)  # limits FPS
+        self.player.update()
 
     def render(self):
         self.screen.fill("black")
@@ -72,7 +57,6 @@ class Game:
             self.update()
             self.render()
         
-            self.delta_t = self.clock.tick(FRAME_RATE)  # limits FPS
 
         pygame.quit()
 
