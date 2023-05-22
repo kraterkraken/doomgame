@@ -16,18 +16,17 @@ from Settings import *
 class Map:
 
     class MapSquare:
-        def __init__(self, row, col, kind):
+        def __init__(self, row, col, kind, size):
             self.kind = kind
-            self.size = RES_WIDTH / 16
             self.row = row
             self.col = col
-            self.x = col * self.size
-            self.y = row * self.size
+            self.x = col * size
+            self.y = row * size
 
     def __init__(self, game):
         self.game = game
         self.map_squares = []
-        self.square_width = RES_WIDTH/16
+        self.square_size = SCREEN_WIDTH / 16
 
         self.map_string = \
             "1111111111111111-"\
@@ -47,11 +46,16 @@ class Map:
         for square in self.map_squares:
 
             pygame.draw.rect(self.game.screen, "blue", 
-                (square.x,      # screen x coordinate
-                square.y,       # screen y coordinate
-                square.size,    # width of rect
-                square.size     # height of rect
+                (square.x,          # screen x coordinate
+                square.y,           # screen y coordinate
+                self.square_size,   # width of rect
+                self.square_size    # height of rect
                 ), 2)
+
+    def xy_to_rc(self, x, y):
+        # convert a screen x-y coordinate into the 
+        # row and column of the square that coordinate is inside of
+        return int(y/self.square_size), int(x/self.square_size)
 
 
     def generate_map(self):
@@ -63,5 +67,5 @@ class Map:
             for col, kind in enumerate([ch for ch in rowstring]):
                 if kind != ' ':
                     # we only need to store walls ... for now
-                    square = self.MapSquare(row, col, kind)
+                    square = self.MapSquare(row, col, kind, self.square_size)
                     self.map_squares.append(square)
