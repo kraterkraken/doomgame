@@ -14,6 +14,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.delta_t = 1
+        self.keys_pressed = {}
         pygame.key.set_repeat(1, 30)
 
         self.running = True
@@ -21,6 +22,9 @@ class Game:
         self.player = Player(self)
 
     def check_events(self):
+
+        self.keys_pressed = pygame.key.get_pressed()
+
         # poll for events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -32,7 +36,25 @@ class Game:
 
     def update(self):
         self.delta_t = self.clock.tick(FRAME_RATE)  # limits FPS
-        self.player.update()
+
+        distance = PLAYER_VELOCITY * self.delta_t
+        a = distance * math.cos(self.player.heading)
+        b = distance * math.sin(self.player.heading)
+        rot_angle = PLAYER_ANGULAR_VELOCITY * self.delta_t
+
+        if self.keys_pressed[MOVE_LEFT]:
+            self.player.move(b, -a)
+        if self.keys_pressed[MOVE_RIGHT]:
+            self.player.move(-b, a)
+        if self.keys_pressed[MOVE_AHEAD]:
+            self.player.move(a, b)
+        if self.keys_pressed[MOVE_BACK]:
+            self.player.move(-a, -b)
+        if self.keys_pressed[ROTATE_C]:
+            self.player.rotate(rot_angle)
+        if self.keys_pressed[ROTATE_CC]:
+            self.player.rotate(-rot_angle)
+
 
     def render(self):
         self.screen.fill("black")

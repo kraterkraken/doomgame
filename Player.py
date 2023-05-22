@@ -11,32 +11,22 @@ class Player:
         self.y = PLAYER_START_Y
         self.heading = 5 * math.pi / 180 # angle in CLOCKWISE radians that player is facing
 
-
-    def update(self):
-        distance = PLAYER_VELOCITY * self.game.delta_t
-        a = distance * math.cos(self.heading)
-        b = distance * math.sin(self.heading)
-
-        keys = pygame.key.get_pressed()
-        if keys[MOVE_LEFT]:
-            self.move(b, -a)
-        if keys[MOVE_RIGHT]:
-            self.move(-b, a)
-        if keys[MOVE_AHEAD]:
-            self.move(a, b)
-        if keys[MOVE_BACK]:
-            self.move(-a, -b)
-
-
     def move(self, delta_x, delta_y):
-        # Moves the player in the x,y distances given
+        # Moves the player in the x,y distances given (unless it makes us collide with a wall)
         self.x += delta_x
         self.y += delta_y
 
+        if (self.wall_collision()):
+            self.x -= delta_x
+            self.y -= delta_y
 
-    def rotate(self, mouse_delta_x):
-        angle = mouse_delta_x * math.pi/180
+    def rotate(self, angle):
         self.heading = self.heading + angle
+        self.heading %= 2*math.pi # keep the angle within [0,2pi] so it doesn't get crazy big
+
+    def wall_collision(self):
+        mypos = self.game.map.xy_to_rc(self.x, self.y)
+        return self.game.map.squares[mypos].is_wall
 
     def draw_topdown(self):
         line_d = SCREEN_WIDTH

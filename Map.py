@@ -16,16 +16,17 @@ from Settings import *
 class Map:
 
     class MapSquare:
-        def __init__(self, row, col, kind, size):
+        def __init__(self, row, col, kind, size, is_wall):
             self.kind = kind
             self.row = row
             self.col = col
             self.x = col * size
             self.y = row * size
+            self.is_wall = is_wall
 
     def __init__(self, game):
         self.game = game
-        self.map_squares = []
+        self.squares = {}
         self.square_size = SCREEN_WIDTH / 16
 
         self.map_string = \
@@ -43,14 +44,14 @@ class Map:
 
 
     def draw_topdown(self):
-        for square in self.map_squares:
-
-            pygame.draw.rect(self.game.screen, "blue", 
-                (square.x,          # screen x coordinate
-                square.y,           # screen y coordinate
-                self.square_size,   # width of rect
-                self.square_size    # height of rect
-                ), 2)
+        for square in self.squares.values():
+            if square.is_wall:
+                pygame.draw.rect(self.game.screen, "blue", 
+                    (square.x,          # screen x coordinate
+                    square.y,           # screen y coordinate
+                    self.square_size,   # width of rect
+                    self.square_size    # height of rect
+                    ), 2)
 
     def xy_to_rc(self, x, y):
         # convert a screen x-y coordinate into the 
@@ -65,7 +66,5 @@ class Map:
 
         for row, rowstring in enumerate(rows):
             for col, kind in enumerate([ch for ch in rowstring]):
-                if kind != ' ':
-                    # we only need to store walls ... for now
-                    square = self.MapSquare(row, col, kind, self.square_size)
-                    self.map_squares.append(square)
+                square = self.MapSquare(row, col, kind, self.square_size, (kind != ' '))
+                self.squares[(row,col)] = square
