@@ -4,6 +4,7 @@ import sys
 from Settings import *
 from Map import *
 from Player import *
+from RayCaster import *
 
 TOPDOWN = True
 
@@ -20,6 +21,7 @@ class Game:
         self.running = True
         self.map = Map(self)
         self.player = Player(self)
+        self.raycaster = RayCaster(self)
 
     def check_events(self):
 

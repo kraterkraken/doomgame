@@ -41,22 +41,25 @@ class Map:
             "1111111111111111-"
 
         self.generate_map();
+        print(self.squares)
 
 
     def draw_topdown(self):
         for square in self.squares.values():
+            color = "gray15"
             if square.is_wall:
-                pygame.draw.rect(self.game.screen, "blue", 
-                    (square.x,          # screen x coordinate
-                    square.y,           # screen y coordinate
-                    self.square_size,   # width of rect
-                    self.square_size    # height of rect
-                    ), 2)
+                color = "blue"
+            pygame.draw.rect(self.game.screen, color, 
+                (square.x,          # screen x coordinate
+                square.y,           # screen y coordinate
+                self.square_size,   # width of rect
+                self.square_size    # height of rect
+                ), 2)
 
-    def xy_to_rc(self, x, y):
+    def xy_to_cr(self, x, y):
         # convert a screen x-y coordinate into the 
         # row and column of the square that coordinate is inside of
-        return int(y/self.square_size), int(x/self.square_size)
+        return int(x/self.square_size), int(y/self.square_size)
 
 
     def generate_map(self):
@@ -67,4 +70,4 @@ class Map:
         for row, rowstring in enumerate(rows):
             for col, kind in enumerate([ch for ch in rowstring]):
                 square = self.MapSquare(row, col, kind, self.square_size, (kind != ' '))
-                self.squares[(row,col)] = square
+                self.squares[(col, row)] = square
