@@ -63,50 +63,48 @@ class RayCaster:
         # (again, we are starting at the edges closest to the "from" in the ray's direction)
         by_col = [x_0, from_y + (x_0 - from_x) * tanangle]
         by_row = [from_x + (y_0 - from_y) / tanangle, y_0]
-        pygame.draw.circle(self.game.screen, "purple", by_col, 9, 0)
-        pygame.draw.circle(self.game.screen, "pink", by_row, 9, 0)
 
-        
-        while self.is_in_bounds(by_col) and self.is_in_bounds(by_row):
+        wall_hit = 0
+        while self.is_in_bounds(by_col):
             # did we hit a wall "by column"?
-            wall_hit = 0
+            pygame.draw.circle(self.game.screen, "purple", by_col, 9, 0)
             if self.game.map.squares[int(by_col[0]/w), int(by_col[1]/w)].is_wall:
                 wall_hit += 1
-
-            # did we hit a wall "by row"?
-            if self.game.map.squares[int(by_row[0]/w), int(by_row[1]/w)].is_wall:
-                wall_hit += 2
-
-            if wall_hit == 1:
-                # if we only hit a wall incrementing by column, return those coordinates
-                return by_col
-            elif wall_hit == 2:
-                # if we only hit a wall incrementing by row, return those coordinates
-                return by_row
-            elif wall_hit == 3:
-                # if we hit walls both ways, return the one that is the smallest distance away
-                # (performance enhancement: distance formula normally uses square-root, but we don't 
-                # need to do that in order to compare which is smaller)
-                dist_by_col = (from_x - by_col[0])**2 + (from_y - by_col[1])**2
-                dist_by_row = (from_x - by_row[0])**2 + (from_y - by_row[1])**2
-                if dist_by_col < dist_by_row: 
-                    return by_col
-                else:
-                    return by_row
+                break;
             else:
-                # we didn't hit any walls, increment and loop again
                 by_col[0] += w_csign
                 by_col[1] += dy
+                
+        while self.is_in_bounds(by_row):
+            # did we hit a wall "by column"?
+            pygame.draw.circle(self.game.screen, "pink", by_row, 9, 0)
+            if self.game.map.squares[int(by_row[0]/w), int(by_row[1]/w)].is_wall:
+                wall_hit += 1
+                break;
+            else:
                 by_row[0] += dx
                 by_row[1] += w_rsign
-
-        # If we get here the ray made it outside the map, which should be impossible.
-        # In this case, just return where-ever we ended up exceeding the map boundary.
-        if not self.is_in_bounds(by_col):
+ 
+        # check to see what wall we hit
+        if wall_hit == 1:
+            # if we only hit a wall incrementing by column, return those coordinates
             return by_col
-        if not self.is_in_bounds(by_row):
+        elif wall_hit == 2:
+            # if we only hit a wall incrementing by row, return those coordinates
             return by_row
-
+        elif wall_hit == 3:
+            # if we hit walls both ways, return the one that is the smallest distance away
+            # (performance enhancement: distance formula normally uses square-root, but we don't 
+            # need to do that in order to compare which is smaller)
+            dist_by_col = (from_x - by_col[0])**2 + (from_y - by_col[1])**2
+            dist_by_row = (from_x - by_row[0])**2 + (from_y - by_row[1])**2
+            if dist_by_col < dist_by_row: 
+                return by_col
+            else:
+                return by_row
+        else:
+            # wow this is a weird wall_hit value ...
+            return (0,0)
 
 
 
