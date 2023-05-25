@@ -22,7 +22,7 @@ class Map:
             self.col = col
             self.x = col * size
             self.y = row * size
-            self.is_wall = is_wall
+            self.is_wall = is_wall            
 
     def __init__(self, game):
         self.game = game
@@ -43,6 +43,13 @@ class Map:
         self.generate_map();
         print(self.squares)
 
+    def is_in_wall(self, x, y):
+        w = self.square_size
+        c = int(x/w)
+        r = int(y/w)
+        return self.squares[c, r].is_wall \
+            and c*w <= x and x <= c*w + w \
+            and r*w <= y and y <= r*w + w
 
     def draw_topdown(self):
         for square in self.squares.values():

@@ -36,11 +36,12 @@ class Player:
         pygame.draw.line(self.game.screen, "green", 
             (self.x, self.y), 
             (line_end_x, line_end_y), 2)
+        pygame.draw.circle(self.game.screen, "green", (line_end_x, line_end_y), 7, 0)
 
         line_end_x = self.x + line_d * math.cos(self.heading)
         line_end_y = self.y + line_d * math.sin(self.heading)
-        pygame.draw.line(self.game.screen, "yellow", 
-            (self.x, self.y), 
-            (line_end_x, line_end_y), 2)
+        # pygame.draw.line(self.game.screen, "yellow", 
+        #     (self.x, self.y), 
+        #     (line_end_x, line_end_y), 2)
 
         pygame.draw.circle(self.game.screen, "white", (self.x, self.y), 7, 0)
