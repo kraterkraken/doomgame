@@ -37,15 +37,16 @@ class RayCaster:
         signsin = sign(sinangle)
         signcos = sign(cosangle)
 
-        ############ TODO: Possible division by zero errors lurking
+        go_col = cosangle != 0 # if we aren't going straight up / down, we can check "by col"
+        go_row = sinangle != 0 # if we aren't going straight left  right, we can check "by row"
 
         # figure out the increments (wx, dy) for searching "by col"
-        h = abs(w / cosangle) # hypotenuse of row-bounded triangle
+        h = w if cosangle == 0 else abs(w / cosangle)
         dy = h * sinangle
         wx = w * sign(cosangle) # the correct sign for moving width units in x direction
 
         # figure out the increments (dx, wy) for searching "by row"
-        h = abs(w / sinangle) # hypotenuse of column-bounded triangle
+        h = w if sinangle == 0 else abs(w / sinangle)
         dx = h * cosangle
         wy = w * sign(sinangle) # the correct sign for moving width units in y direction
 
@@ -65,13 +66,15 @@ class RayCaster:
         # by_col is the coordinates where the ray intersects a column edge
         # by_row is the coordinates where the ray intersects a row edge
         # (again, we are starting at the edges closest to the "from" in the ray's direction)
-        by_col = [x_0, from_y + (x_0 - from_x) * tanangle]
-        by_row = [from_x + (y_0 - from_y) / tanangle, y_0]
+        temp = from_y + (x_0 - from_x) * tanangle
+        by_col = [x_0, temp]
+        temp = 1 if cosangle == 0 else from_x + (y_0 - from_y) / tanangle # this prevents division by zero
+        by_row = [temp, y_0]
         # pygame.draw.circle(self.game.screen, "purple", by_col, 9, 0)
         # pygame.draw.circle(self.game.screen, "pink", by_row, 9, 0)
 
         wall_hit = 0
-        while self.is_in_bounds(by_col):
+        while go_col and self.is_in_bounds(by_col):
             # did we hit a wall "by column"?
             # pygame.draw.circle(self.game.screen, "purple", by_col, 9, 0)
             if self.game.map.is_in_wall(by_col[0] + signcos, by_col[1]):
@@ -81,7 +84,7 @@ class RayCaster:
                 by_col[0] += wx
                 by_col[1] += dy
                 
-        while self.is_in_bounds(by_row):
+        while go_row and self.is_in_bounds(by_row):
             # did we hit a wall "by column"?
             # pygame.draw.circle(self.game.screen, "pink", by_row, 9, 0)
             if self.game.map.is_in_wall(by_row[0], by_row[1] + signsin):

@@ -41,7 +41,6 @@ class Map:
             "1111111111111111-"
 
         self.generate_map();
-        print(self.squares)
 
     def is_in_wall(self, x, y):
         w = self.square_size
