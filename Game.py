@@ -58,6 +58,7 @@ class Game:
             self.player.rotate(-rot_angle)
 
 
+
     def render(self):
         self.screen.fill("black")
 
@@ -65,6 +66,7 @@ class Game:
             # topdown view is primarily for debugging and testing
             self.map.draw_topdown()
             self.player.draw_topdown()
+            self.raycaster.ray_cast(self.player.x, self.player.y, self.player.heading, TOPDOWN)
 
         else:
             # this draws the game the way a player will see it

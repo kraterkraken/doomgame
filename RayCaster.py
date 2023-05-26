@@ -11,8 +11,18 @@ class RayCaster:
         self.game = game
 
 
-    def ray_cast(self):
-        pass
+    def ray_cast(self, x, y, heading, is_topdown):
+
+        angle = heading - HALF_FOV
+        ray_count = 0
+        while ray_count < NUM_RAYS:
+            endx, endy = self.find_wall(x, y, angle)
+            if is_topdown:
+                pygame.draw.line(self.game.screen, "yellow", 
+                    (x, y), 
+                    (endx, endy), 2)
+            angle += RAY_ANGLE
+            ray_count += 1
 
     def is_in_bounds(self, pos):
         if (pos[0] > SCREEN_WIDTH
