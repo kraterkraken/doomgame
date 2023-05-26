@@ -11,16 +11,17 @@ class RayCaster:
         self.game = game
 
 
-    def ray_cast(self, x, y, heading, is_topdown):
+    def ray_cast(self, x, y, heading):
 
         angle = heading - HALF_FOV
         ray_count = 0
         while ray_count < NUM_RAYS:
-            endx, endy = self.find_wall(x, y, angle)
-            if is_topdown:
-                pygame.draw.line(self.game.screen, "yellow", 
-                    (x, y), 
-                    (endx, endy), 2)
+            endx, endy, depth = self.find_wall(x, y, angle)
+            if TOPDOWN:
+                pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
+            else:
+                pass
+
             angle += RAY_ANGLE
             ray_count += 1
 
@@ -48,7 +49,7 @@ class RayCaster:
         signcos = sign(cosangle)
 
         go_col = cosangle != 0 # if we aren't going straight up / down, we can check "by col"
-        go_row = sinangle != 0 # if we aren't going straight left  right, we can check "by row"
+        go_row = sinangle != 0 # if we aren't going straight left / right, we can check "by row"
 
         # figure out the increments (wx, dy) for searching "by col"
         h = w if cosangle == 0 else abs(w / cosangle)
@@ -70,8 +71,6 @@ class RayCaster:
         from_c = int(from_x/w)
         x_0 = w * (from_c + int(signcos + 0.5))
         y_0 = w * (from_r + int(signsin + 0.5))
-        # pygame.draw.circle(self.game.screen, "red", (from_x, y_0), 3, 0)
-        # pygame.draw.circle(self.game.screen, "orange", (x_0, from_y), 3, 0)
 
         # by_col is the coordinates where the ray intersects a column edge
         # by_row is the coordinates where the ray intersects a row edge
@@ -80,13 +79,10 @@ class RayCaster:
         by_col = [x_0, temp]
         temp = 1 if cosangle == 0 else from_x + (y_0 - from_y) / tanangle # this prevents division by zero
         by_row = [temp, y_0]
-        # pygame.draw.circle(self.game.screen, "purple", by_col, 9, 0)
-        # pygame.draw.circle(self.game.screen, "pink", by_row, 9, 0)
 
         wall_hit = 0
         while go_col and self.is_in_bounds(by_col):
             # did we hit a wall "by column"?
-            # pygame.draw.circle(self.game.screen, "purple", by_col, 9, 0)
             if self.game.map.is_in_wall(by_col[0] + signcos, by_col[1]):
                 wall_hit += 1
                 break;
@@ -96,7 +92,6 @@ class RayCaster:
                 
         while go_row and self.is_in_bounds(by_row):
             # did we hit a wall "by column"?
-            # pygame.draw.circle(self.game.screen, "pink", by_row, 9, 0)
             if self.game.map.is_in_wall(by_row[0], by_row[1] + signsin):
                 wall_hit += 2
                 break;
@@ -104,27 +99,26 @@ class RayCaster:
                 by_row[0] += dx
                 by_row[1] += wy
 
+        dist_by_col = depth(from_x, from_y, by_col[0], by_col[1])
+        dist_by_row = depth(from_x, from_y, by_row[0], by_row[1])
+
         # check to see what wall we hit
         if wall_hit == 1:
             # if we only hit a wall incrementing by column, return those coordinates
-            return by_col
+            return by_col[0], by_col[1], dist_by_col
         elif wall_hit == 2:
             # if we only hit a wall incrementing by row, return those coordinates
-            return by_row
+            return by_row[0], by_row[1], dist_by_row
         elif wall_hit == 3:
             # if we hit walls both ways, return the one that is the smallest distance away
-            # (performance enhancement: distance formula normally uses square-root, but we don't 
-            # need to do that in order to compare which is smaller)
-            dist_by_col = (from_x - by_col[0])**2 + (from_y - by_col[1])**2
-            dist_by_row = (from_x - by_row[0])**2 + (from_y - by_row[1])**2
-
             if dist_by_col < dist_by_row: 
-                return by_col
+                return by_col[0], by_col[1], dist_by_col
             else:
-                return by_row
+                return by_row[0], by_row[1], dist_by_row
+                
         else:
             # wow this is a weird wall_hit value ...
-            return (0,0)
+            return (0,0,0)
 
 
 

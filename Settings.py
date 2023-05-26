@@ -1,6 +1,9 @@
 import pygame
 import math
 
+# debugging
+TOPDOWN = True # set to True to for topdown 2D view of entire map; False for standard 3D gameplay
+
 # basic settings
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900

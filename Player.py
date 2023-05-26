@@ -29,19 +29,8 @@ class Player:
         mypos = self.game.map.xy_to_cr(self.x, self.y)
         return self.game.map.squares[mypos].is_wall
 
-    def draw_topdown(self):
-        line_d = SCREEN_WIDTH
-
-        line_end_x, line_end_y = self.game.raycaster.find_wall(self.x, self.y, self.heading)
-        # pygame.draw.line(self.game.screen, "green", 
-        #     (self.x, self.y), 
-        #     (line_end_x, line_end_y), 2)
-        pygame.draw.circle(self.game.screen, "green", (line_end_x, line_end_y), 7, 0)
-
-        line_end_x = self.x + line_d * math.cos(self.heading)
-        line_end_y = self.y + line_d * math.sin(self.heading)
-        # pygame.draw.line(self.game.screen, "yellow", 
-        #     (self.x, self.y), 
-        #     (line_end_x, line_end_y), 2)
-
-        pygame.draw.circle(self.game.screen, "white", (self.x, self.y), 7, 0)
+    def draw(self):
+        if TOPDOWN:
+            pygame.draw.circle(self.game.screen, "white", (self.x, self.y), 7, 0)
+            line_end_x, line_end_y, depth = self.game.raycaster.find_wall(self.x, self.y, self.heading)
+            pygame.draw.circle(self.game.screen, "green", (line_end_x, line_end_y), 7, 0)

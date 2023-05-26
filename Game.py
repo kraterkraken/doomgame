@@ -6,8 +6,6 @@ from Map import *
 from Player import *
 from RayCaster import *
 
-TOPDOWN = True
-
 class Game:
     def __init__(self):
         # pygame setup
@@ -61,18 +59,9 @@ class Game:
 
     def render(self):
         self.screen.fill("black")
-
-        if TOPDOWN:
-            # topdown view is primarily for debugging and testing
-            self.map.draw_topdown()
-            self.player.draw_topdown()
-            self.raycaster.ray_cast(self.player.x, self.player.y, self.player.heading, TOPDOWN)
-
-        else:
-            # this draws the game the way a player will see it
-            pass
-
-
+        self.map.draw() # only does something in TOPDOWN mode
+        self.player.draw() # only does something in TOPDOWN mode
+        self.raycaster.ray_cast(self.player.x, self.player.y, self.player.heading)
 
         # flip() the display to put your work on screen
         pygame.display.flip()

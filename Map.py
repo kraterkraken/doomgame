@@ -50,17 +50,19 @@ class Map:
             and c*w <= x and x <= c*w + w \
             and r*w <= y and y <= r*w + w
 
-    def draw_topdown(self):
-        for square in self.squares.values():
-            color = "gray15"
-            if square.is_wall:
-                color = "blue"
-            pygame.draw.rect(self.game.screen, color, 
-                (square.x,          # screen x coordinate
-                square.y,           # screen y coordinate
-                self.square_size,   # width of rect
-                self.square_size    # height of rect
-                ), 2)
+    def draw(self):
+
+        if TOPDOWN:
+            for square in self.squares.values():
+                color = "gray15"
+                if square.is_wall:
+                    color = "blue"
+                pygame.draw.rect(self.game.screen, color, 
+                    (square.x,          # screen x coordinate
+                    square.y,           # screen y coordinate
+                    self.square_size,   # width of rect
+                    self.square_size    # height of rect
+                    ), 2)
 
     def xy_to_cr(self, x, y):
         # convert a screen x-y coordinate into the 
