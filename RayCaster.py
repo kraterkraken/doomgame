@@ -27,6 +27,9 @@ class RayCaster:
                 # Assumption: player is ALWAYS looking at the vertical center of
                 # any portion of any wall.
 
+                # un-fisheye the depth
+                depth = depth * math.cos(angle - heading)
+
                 # project the wall onto the viewscreen
                 wall_height = WALL_HEIGHT * VIEWER_DEPTH / depth
 
