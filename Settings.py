@@ -2,7 +2,7 @@ import pygame
 import math
 
 # debugging
-TOPDOWN = True # set to True to for topdown 2D view of entire map; False for standard 3D gameplay
+TOPDOWN = False # set to True to for topdown 2D view of entire map; False for standard 3D gameplay
 
 # basic settings
 SCREEN_WIDTH = 1600
@@ -25,6 +25,10 @@ ROTATE_C = pygame.K_RIGHT
 
 # constants ... don't change
 HALF_FOV = FOV / 2 # performance enhancement (less divisions)
-NUM_RAYS = SCREEN_WIDTH # each ray needs to hit a pixel
+WALL_CHUNK_WIDTH = 2
+NUM_RAYS = SCREEN_WIDTH // WALL_CHUNK_WIDTH
 RAY_ANGLE = FOV / NUM_RAYS
+
+WALL_HEIGHT = 100
+VIEWER_DEPTH = (SCREEN_WIDTH / 2) / math.tan(HALF_FOV)
 

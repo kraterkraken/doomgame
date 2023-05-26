@@ -20,7 +20,27 @@ class RayCaster:
             if TOPDOWN:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
             else:
-                pass
+                # Draw a very narrow vertical rectangle to represent the portion
+                # of the wall that the current ray hit.  The farther away it is
+                # the shorter the portion will be, which will give the illusion 
+                # of the entire wall receding if it is at an angle to the player.
+                # Assumption: player is ALWAYS looking at the vertical center of
+                # any portion of any wall.
+
+                # project the wall onto the viewscreen
+                wall_height = WALL_HEIGHT * VIEWER_DEPTH / depth
+
+                # the farther away the wall, the dimmer the color
+                color = 255 - int(255 * depth/SCREEN_WIDTH)
+
+                pygame.draw.rect(
+                    self.game.screen, 
+                    pygame.Color(color, color, color), 
+                    (int(ray_count * WALL_CHUNK_WIDTH),     # screen x coordinate
+                    int((SCREEN_HEIGHT - wall_height)/2),   # screen y coordinate
+                    WALL_CHUNK_WIDTH,                       # width of rect
+                    int(wall_height)),                      # height of rect
+                    2)
 
             angle += RAY_ANGLE
             ray_count += 1
@@ -115,7 +135,7 @@ class RayCaster:
                 return by_col[0], by_col[1], dist_by_col
             else:
                 return by_row[0], by_row[1], dist_by_row
-                
+
         else:
             # wow this is a weird wall_hit value ...
             return (0,0,0)
