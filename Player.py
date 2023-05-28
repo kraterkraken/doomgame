@@ -3,6 +3,7 @@ import pygame
 
 from Settings import *
 from Game import *
+from Utility import *
 
 class Player:
     def __init__(self, game):
@@ -26,7 +27,7 @@ class Player:
         self.heading %= 2.0*math.pi # keep the angle within [0,2pi] so it doesn't get crazy big
 
     def wall_collision(self):
-        mypos = self.game.map.xy_to_cr(self.x, self.y)
+        mypos = xy_to_cr(self.x, self.y)
         return self.game.map.squares[mypos].is_wall
 
     def draw(self):

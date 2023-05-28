@@ -1,8 +1,10 @@
 import pygame
+import sys
 from Game import *
 from Settings import *
+from Utility import *
 
-# In the map, empty space is, unsurprisingly, represented by a space in the map string.
+# In the map string, empty space is, unsurprisingly, represented by a space in the map string.
 # Any other character represents a wall.  The character used for the wall tells the 
 # class what texture to use for the wall.
 #
@@ -10,24 +12,22 @@ from Settings import *
 #
 # The map string should be the same aspect ratio as the screen (in the case of this 
 # game, 16:9).  In other words, the screen resolution width divided by number of columns 
-# should equal the screen resolution height divided by number of rows.  There are zero
-# checks for this, so be careful designing maps.
+# must equal the screen resolution height divided by number of rows.
 
 class Map:
 
     class MapSquare:
-        def __init__(self, row, col, kind, size, is_wall):
+        def __init__(self, row, col, kind, is_wall):
             self.kind = kind
             self.row = row
             self.col = col
-            self.x = col * size
-            self.y = row * size
+            self.x = col * TILE_SIZE
+            self.y = row * TILE_SIZE
             self.is_wall = is_wall            
 
     def __init__(self, game):
         self.game = game
         self.squares = {}
-        self.square_size = SCREEN_WIDTH / 16
 
         self.map_string = \
             "1111111111111111-"\
@@ -38,20 +38,31 @@ class Map:
             "1              1-"\
             "1              1-"\
             "1  1    1      1-"\
-            "1111111111111111-"
+            "1111111111111111"
+            
+        if self.is_good_map():
+            self.generate_map();
+        else:
+            print("Error: Map aspect ratio does not equal screen aspect ratio. Quitting.")
+            sys.exit()
 
-        self.generate_map();
+    def is_good_map(self):
+        map_rows = self.map_string.split('-')
+        if SCREEN_HEIGHT != TILE_SIZE * len(map_rows):
+            return False
+        for row in map_rows:
+            if SCREEN_WIDTH != TILE_SIZE * len(row):
+                return False
+        return True
 
     def is_in_wall(self, x, y):
-        w = self.square_size
-        c = int(x/w)
-        r = int(y/w)
+        w = TILE_SIZE
+        c, r = xy_to_cr(x, y)
         return self.squares[c, r].is_wall \
             and c*w <= x and x <= c*w + w \
             and r*w <= y and y <= r*w + w
 
     def draw(self):
-
         if TOPDOWN:
             for square in self.squares.values():
                 color = "gray15"
@@ -60,22 +71,13 @@ class Map:
                 pygame.draw.rect(self.game.screen, color, 
                     (square.x,          # screen x coordinate
                     square.y,           # screen y coordinate
-                    self.square_size,   # width of rect
-                    self.square_size    # height of rect
+                    TILE_SIZE,          # width of rect
+                    TILE_SIZE           # height of rect
                     ), 2)
 
-    def xy_to_cr(self, x, y):
-        # convert a screen x-y coordinate into the 
-        # row and column of the square that coordinate is inside of
-        return int(x/self.square_size), int(y/self.square_size)
-
-
     def generate_map(self):
-
-        # We need to keep track of the numeric coordinates of each "square" on the map.
         rows = self.map_string.split('-')
-
         for row, rowstring in enumerate(rows):
             for col, kind in enumerate([ch for ch in rowstring]):
-                square = self.MapSquare(row, col, kind, self.square_size, (kind != ' '))
+                square = self.MapSquare(row, col, kind, (kind != ' '))
                 self.squares[(col, row)] = square

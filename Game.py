@@ -5,6 +5,7 @@ from Settings import *
 from Map import *
 from Player import *
 from RayCaster import *
+from Graphics import *
 
 class Game:
     def __init__(self):
@@ -14,12 +15,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.delta_t = 1
         self.keys_pressed = {}
-        pygame.key.set_repeat(1, 30)
 
         self.running = True
         self.map = Map(self)
         self.player = Player(self)
         self.raycaster = RayCaster(self)
+        self.graphics = Graphics(self)
 
     def check_events(self):
 
@@ -54,7 +55,6 @@ class Game:
             self.player.rotate(rot_angle)
         if self.keys_pressed[ROTATE_CC]:
             self.player.rotate(-rot_angle)
-
 
 
     def render(self):

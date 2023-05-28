@@ -5,10 +5,19 @@ from Settings import *
 
 from Game import *
 
-class RayCaster:
+class RayCaster:                                               
+
+    class WallChunk:
+        def __init__(self, x, y, height, width, depth):
+            self.x = x
+            self.y = y
+            self.height = height
+            self.width = width
+            self.depth = depth
 
     def __init__(self, game):
         self.game = game
+        self.wall_chunks = []
 
 
     def ray_cast(self, x, y, heading):
@@ -21,29 +30,50 @@ class RayCaster:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
             else:
                 # Draw a very narrow vertical rectangle to represent the portion
-                # of the wall that the current ray hit.  The farther away it is
-                # the shorter the portion will be, which will give the illusion 
-                # of the entire wall receding if it is at an angle to the player.
-                # Assumption: player is ALWAYS looking at the vertical center of
-                # any portion of any wall.
+                # of the wall ("wall chunk") that the current ray hit.  The 
+                # farther away it is the shorter the wall chunk will be, which  
+                # will give the illusion of the entire wall receding if it is at  
+                # an angle to the player.  Assumption: player is ALWAYS looking  
+                # at the vertical center of any portion of any wall.
 
                 # un-fisheye the depth
                 depth = depth * math.cos(angle - heading)
 
-                # project the wall onto the viewscreen
-                wall_height = WALL_HEIGHT * VIEWER_DEPTH / depth
+                # find the height of the projected the wall chunk on the viewscreen
+                wall_height = int(WALL_HEIGHT * VIEWER_DEPTH / depth)
 
-                # the farther away the wall, the dimmer the color
-                color = 255 - int(255 * depth/SCREEN_WIDTH)
+                # here are the coordinates of the wall chunk
+                screen_x = int(ray_count * WALL_CHUNK_WIDTH)
+                screen_y = int((SCREEN_HEIGHT - wall_height)/2)
 
-                pygame.draw.rect(
-                    self.game.screen, 
-                    pygame.Color(color, color, color), 
-                    (int(ray_count * WALL_CHUNK_WIDTH),     # screen x coordinate
-                    int((SCREEN_HEIGHT - wall_height)/2),   # screen y coordinate
-                    WALL_CHUNK_WIDTH,                       # width of rect
-                    int(wall_height)),                      # height of rect
-                    2)
+                if PLAINWALL:
+                    # the farther away the wall, the dimmer the color
+                    color = 255 - int(255 * depth/SCREEN_WIDTH)
+
+                    pygame.draw.rect(
+                        self.game.screen, 
+                        pygame.Color(color, color, color), 
+                        (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height),2)
+                else:
+                    textures = self.game.graphics.textures
+
+                    # # keep a list of every wall chunk we need to draw
+                    # self.wall_chunks.append(WallChunk(screen_x, screen_y, wall_height, WALL_CHUNK_WIDTH, depth))
+
+                    # grab a portion of the texture to paint on this part of the wall
+
+                    # TODO: offset will eventually be the percentage of the way across
+                    #       a wall tile that the ray hit (e.g., ray hit 43% of the way
+                    #       from one wall edge to the other)
+                    offset = 0.2
+                    chunk = textures["brickwall"].subsurface(
+                        offset * (TEXTURE_SIZE - WALL_CHUNK_WIDTH), 0, WALL_CHUNK_WIDTH, TEXTURE_SIZE)
+                    # # scale the texture portion down to size
+                    # chunk = pygame.transform.scale(chunk, wall_height)
+                    # self.game.screen.blit(chunk, (0,0))
+                    pass
+
+
 
             angle += RAY_ANGLE
             ray_count += 1
@@ -58,12 +88,18 @@ class RayCaster:
             return True
 
     def find_wall(self, from_x, from_y, angle):
-        # return the coordinates of the first wall we hit when we cast a ray 
-        # from the given x,y at the given angle
+        # This function finds the nearest wall hit by a ray
+        # cast from (from_x,from_y) and returns the following:
+        #
+        #   x :     horiz map coordinate where the ray hit the wall
+        #   y :     vert map coordinate where the way hit the wall
+        #   depth:  distance from (from_x,fomr_y) to the wall
+        #   col :   the map column where the ray hit the wall
+        #   row :   the map row where the ray hit the wall
 
         # this was insanely hard to come up with
 
-        w = self.game.map.square_size # w = width of a square
+        w = TILE_SIZE
 
         cosangle = math.cos(angle)
         sinangle = math.sin(angle)
@@ -90,8 +126,7 @@ class RayCaster:
         #   When sin/cos is positive we need to add 1 to the "from" row/col
         #   When sin/cos is negative we need to add ZERO to the "from" row/col
         #   To accomplish this I take the sign of each, add 0.5 and truncate to int.
-        from_r = int(from_y/w)
-        from_c = int(from_x/w)
+        from_c, from_r = xy_to_cr(from_x, from_y)
         x_0 = w * (from_c + int(signcos + 0.5))
         y_0 = w * (from_r + int(signsin + 0.5))
 
