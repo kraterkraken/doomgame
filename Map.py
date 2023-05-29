@@ -23,7 +23,7 @@ class Map:
             self.col = col
             self.x = col * TILE_SIZE
             self.y = row * TILE_SIZE
-            self.is_wall = is_wall            
+            self.is_wall = is_wall
 
     def __init__(self, game):
         self.game = game
