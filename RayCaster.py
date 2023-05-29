@@ -26,9 +26,28 @@ class RayCaster:
         ray_count = 0
         while ray_count < NUM_RAYS:
             endx, endy, depth, c, r = self.find_wall(x, y, angle)
+
+            # the closer away the wall, the brighter it will appear
+            brightness = 255 - int(255 * depth/SCREEN_WIDTH)
+
+            # un-fisheye the depth
+            depth = depth * math.cos(angle - heading)
+
+            # find the height of the projected the wall chunk on the viewscreen
+            wall_height = int(WALL_HEIGHT * VIEWER_DEPTH / depth)
+
+            # here are the coordinates of the wall chunk
+            screen_x = int(ray_count * WALL_CHUNK_WIDTH)
+            screen_y = int((SCREEN_HEIGHT - wall_height)/2)
+
+
+            # ----------------- Debugging Modes ------------ -------------------------
             if TOPDOWN:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
-            else:
+                angle += RAY_ANGLE
+                ray_count += 1
+                continue
+            if PLAINWALL:
                 # Draw a very narrow vertical rectangle to represent the portion
                 # of the wall ("wall chunk") that the current ray hit.  The 
                 # farther away it is the shorter the wall chunk will be, which  
@@ -36,72 +55,56 @@ class RayCaster:
                 # an angle to the player.  Assumption: player is ALWAYS looking  
                 # at the vertical center of any portion of any wall.
 
-                # un-fisheye the depth
-                depth = depth * math.cos(angle - heading)
-
-                # find the height of the projected the wall chunk on the viewscreen
-                wall_height = int(WALL_HEIGHT * VIEWER_DEPTH / depth)
-
-                # here are the coordinates of the wall chunk
-                screen_x = int(ray_count * WALL_CHUNK_WIDTH)
-                screen_y = int((SCREEN_HEIGHT - wall_height)/2)
-
-                if PLAINWALL:
-                    # the farther away the wall, the dimmer the color
-                    color = 255 - int(255 * depth/SCREEN_WIDTH)
-
-                    pygame.draw.rect(
-                        self.game.screen, 
-                        pygame.Color(color, color, color), 
-                        (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height),2)
-
-                    self.game.graphics.test()
+                pygame.draw.rect(
+                    self.game.screen, 
+                    pygame.Color(brightness, brightness, brightness), 
+                    (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height),2)
+                angle += RAY_ANGLE
+                ray_count += 1
+                continue
+            # ----------------- End: Debugging Modes ---------------------------------
 
 
-                else:
-
-                    # We need to find how far (percentagewise) across the edge of the 
-                    # tile that the ray hit.  There are 4 cases: (1) ray hit the left
-                    # of the tile, (2) ray hit the bottom of the tile, (3) ray hit
-                    # the right of the tile, and (4) ray hit the top of the tile.
-                    # Rays always scan from left to right from the perspective of the 
-                    # player, so for the 4 cases the rays scan (1) down, (2) right,
-                    # (3) up, and (4) left.  
+            # We need to find how far (percentagewise) across the edge of the 
+            # tile that the ray hit.  There are 4 cases: (1) ray hit the left
+            # of the tile, (2) ray hit the bottom of the tile, (3) ray hit
+            # the right of the tile, and (4) ray hit the top of the tile.
+            # Rays always scan from left to right from the perspective of the 
+            # player, so for the 4 cases the rays scan (1) down, (2) right,
+            # (3) up, and (4) left.  
 
 
-                    # Starting in the upper left of the tile and going counter-clockwise,
-                    # I'm going to label the corners A, B, C, D:
+            # Starting in the upper left of the tile and going counter-clockwise,
+            # I'm going to label the corners A, B, C, D:
 
-                    w = TILE_SIZE
-                    Ax, Ay = (w*c, w*r)
-                    Bx, By = (Ax, Ay+w)
-                    Cx, Cy = (Ax+w, By)
-                    Dx, Dy = (Cx, Ay)
+            w = TILE_SIZE
+            Ax, Ay = (w*c, w*r)
+            Bx, By = (Ax, Ay+w)
+            Cx, Cy = (Ax+w, By)
+            Dx, Dy = (Cx, Ay)
 
-                    percent = 0
-                    if (endx == Ax):
-                        # CASE 1
-                        percent = (endy - Ay) / TILE_SIZE
-                    elif (endy == By):
-                        # CASE 2
-                        percent = (endx - Bx) / TILE_SIZE
-                    elif (endx == Cx):
-                        # CASE 3
-                        percent = (Cy - endy) / TILE_SIZE
-                    elif (endy == Dy):
-                        # CASE 4
-                        percent = (Dx - endx) / TILE_SIZE
+            percent = 0
+            if (endx == Ax):
+                # CASE 1
+                percent = (endy - Ay) / TILE_SIZE
+            elif (endy == By):
+                # CASE 2
+                percent = (endx - Bx) / TILE_SIZE
+            elif (endx == Cx):
+                # CASE 3
+                percent = (Cy - endy) / TILE_SIZE
+            elif (endy == Dy):
+                # CASE 4
+                percent = (Dx - endx) / TILE_SIZE
 
-                    offset = percent * TILE_SIZE
+            offset = percent * TILE_SIZE
 
-                    self.game.graphics.draw_wall_chunk(
-                        "brickwall", 
-                        (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height), 
-                        offset,
-                        255 - (255 * depth//SCREEN_WIDTH))
+            self.game.graphics.draw_wall_chunk(
+                "brickwall", 
+                (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height), 
+                offset,
+                brightness)
  
-
-
             angle += RAY_ANGLE
             ray_count += 1
 
