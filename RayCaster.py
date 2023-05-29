@@ -84,21 +84,19 @@ class RayCaster:
             Cx, Cy = (Ax+w, By)
             Dx, Dy = (Cx, Ay)
 
-            percent = 0
+            offset = 0
             if (endx == Ax):
                 # CASE 1
-                percent = (endy - Ay) / TILE_SIZE
+                offset = endy - Ay
             elif (endy == By):
                 # CASE 2
-                percent = (endx - Bx) / TILE_SIZE
+                offset = endx - Bx
             elif (endx == Cx):
                 # CASE 3
-                percent = (Cy - endy) / TILE_SIZE
+                offset = Cy - endy
             elif (endy == Dy):
                 # CASE 4
-                percent = (Dx - endx) / TILE_SIZE
-
-            offset = percent * TILE_SIZE
+                offset = Dx - endx
 
             self.game.graphics.draw_wall_chunk(
                 "brickwall", 
