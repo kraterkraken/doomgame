@@ -33,5 +33,5 @@ class Player:
     def draw(self):
         if TOPDOWN:
             pygame.draw.circle(self.game.screen, "white", (self.x, self.y), 7, 0)
-            line_end_x, line_end_y, depth = self.game.raycaster.find_wall(self.x, self.y, self.heading)
+            line_end_x, line_end_y, depth, c, r = self.game.raycaster.find_wall(self.x, self.y, self.heading)
             pygame.draw.circle(self.game.screen, "green", (line_end_x, line_end_y), 7, 0)

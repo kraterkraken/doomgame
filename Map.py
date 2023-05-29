@@ -39,7 +39,7 @@ class Map:
             "1              1-"\
             "1  1    1      1-"\
             "1111111111111111"
-            
+
         if self.is_good_map():
             self.generate_map();
         else:
@@ -56,11 +56,8 @@ class Map:
         return True
 
     def is_in_wall(self, x, y):
-        w = TILE_SIZE
         c, r = xy_to_cr(x, y)
-        return self.squares[c, r].is_wall \
-            and c*w <= x and x <= c*w + w \
-            and r*w <= y and y <= r*w + w
+        return self.squares[c, r].is_wall
 
     def draw(self):
         if TOPDOWN:

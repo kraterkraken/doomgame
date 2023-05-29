@@ -25,7 +25,7 @@ class RayCaster:
         angle = heading - HALF_FOV
         ray_count = 0
         while ray_count < NUM_RAYS:
-            endx, endy, depth = self.find_wall(x, y, angle)
+            endx, endy, depth, c, r = self.find_wall(x, y, angle)
             if TOPDOWN:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
             else:
@@ -54,25 +54,52 @@ class RayCaster:
                         self.game.screen, 
                         pygame.Color(color, color, color), 
                         (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height),2)
+
+                    self.game.graphics.test()
+
+
                 else:
-                    textures = self.game.graphics.textures
 
-                    # # keep a list of every wall chunk we need to draw
-                    # self.wall_chunks.append(WallChunk(screen_x, screen_y, wall_height, WALL_CHUNK_WIDTH, depth))
+                    # We need to find how far (percentagewise) across the edge of the 
+                    # tile that the ray hit.  There are 4 cases: (1) ray hit the left
+                    # of the tile, (2) ray hit the bottom of the tile, (3) ray hit
+                    # the right of the tile, and (4) ray hit the top of the tile.
+                    # Rays always scan from left to right from the perspective of the 
+                    # player, so for the 4 cases the rays scan (1) down, (2) right,
+                    # (3) up, and (4) left.  
 
-                    # grab a portion of the texture to paint on this part of the wall
 
-                    # TODO: offset will eventually be the percentage of the way across
-                    #       a wall tile that the ray hit (e.g., ray hit 43% of the way
-                    #       from one wall edge to the other)
-                    offset = 0.2
-                    chunk = textures["brickwall"].subsurface(
-                        offset * (TEXTURE_SIZE - WALL_CHUNK_WIDTH), 0, WALL_CHUNK_WIDTH, TEXTURE_SIZE)
-                    # # scale the texture portion down to size
-                    # chunk = pygame.transform.scale(chunk, wall_height)
-                    # self.game.screen.blit(chunk, (0,0))
-                    pass
+                    # Starting in the upper left of the tile and going counter-clockwise,
+                    # I'm going to label the corners A, B, C, D:
 
+                    w = TILE_SIZE
+                    Ax, Ay = (w*c, w*r)
+                    Bx, By = (Ax, Ay+w)
+                    Cx, Cy = (Ax+w, By)
+                    Dx, Dy = (Cx, Ay)
+
+                    percent = 0
+                    if (endx == Ax):
+                        # CASE 1
+                        percent = (endy - Ay) / TILE_SIZE
+                    elif (endy == By):
+                        # CASE 2
+                        percent = (endx - Bx) / TILE_SIZE
+                    elif (endx == Cx):
+                        # CASE 3
+                        percent = (Cy - endy) / TILE_SIZE
+                    elif (endy == Dy):
+                        # CASE 4
+                        percent = (Dx - endx) / TILE_SIZE
+
+                    offset = percent * TILE_SIZE
+
+                    self.game.graphics.draw_wall_chunk(
+                        "brickwall", 
+                        (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height), 
+                        offset,
+                        255 - (255 * depth//SCREEN_WIDTH))
+ 
 
 
             angle += RAY_ANGLE
@@ -138,20 +165,17 @@ class RayCaster:
         temp = 1 if cosangle == 0 else from_x + (y_0 - from_y) / tanangle # this prevents division by zero
         by_row = [temp, y_0]
 
-        wall_hit = 0
         while go_col and self.is_in_bounds(by_col):
             # did we hit a wall "by column"?
             if self.game.map.is_in_wall(by_col[0] + signcos, by_col[1]):
-                wall_hit += 1
                 break;
             else:
                 by_col[0] += wx
                 by_col[1] += dy
                 
         while go_row and self.is_in_bounds(by_row):
-            # did we hit a wall "by column"?
+            # did we hit a wall "by row"?
             if self.game.map.is_in_wall(by_row[0], by_row[1] + signsin):
-                wall_hit += 2
                 break;
             else:
                 by_row[0] += dx
@@ -160,23 +184,13 @@ class RayCaster:
         dist_by_col = depth(from_x, from_y, by_col[0], by_col[1])
         dist_by_row = depth(from_x, from_y, by_row[0], by_row[1])
 
-        # check to see what wall we hit
-        if wall_hit == 1:
-            # if we only hit a wall incrementing by column, return those coordinates
-            return by_col[0], by_col[1], dist_by_col
-        elif wall_hit == 2:
-            # if we only hit a wall incrementing by row, return those coordinates
-            return by_row[0], by_row[1], dist_by_row
-        elif wall_hit == 3:
-            # if we hit walls both ways, return the one that is the smallest distance away
-            if dist_by_col < dist_by_row: 
-                return by_col[0], by_col[1], dist_by_col
-            else:
-                return by_row[0], by_row[1], dist_by_row
+        wallpos = by_row
+        dist = dist_by_row
+        if dist_by_col < dist_by_row:
+            wallpos = by_col
+            dist = dist_by_col
 
-        else:
-            # wow this is a weird wall_hit value ...
-            return (0,0,0)
-
+        c, r = xy_to_cr(wallpos[0], wallpos[1])
+        return wallpos[0], wallpos[1], dist, c, r
 
 

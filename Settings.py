@@ -3,10 +3,10 @@ import math
 
 # debugging
 TOPDOWN = False # set to True to for topdown 2D view of entire map; False for standard 3D gameplay
-PLAINWALL = True # set to true to eliminate wall textures; False for standard 3D gameplay
+PLAINWALL = False # set to true to eliminate wall textures; False for standard 3D gameplay
 
 # basic settings
-ASPECT_RATIO = (16,9)
+ASPECT_RATIO = (16,9) # for screen AND map tiles!
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
 FRAME_RATE = 60
