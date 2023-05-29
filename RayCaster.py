@@ -22,9 +22,14 @@ class RayCaster:
 
     def ray_cast(self, x, y, heading):
 
-        angle = heading - HALF_FOV
-        ray_count = 0
+        angle = heading - HALF_FOV - RAY_ANGLE
+        ray_count = -1
+
         while ray_count < NUM_RAYS:
+
+            angle += RAY_ANGLE
+            ray_count += 1
+
             endx, endy, depth, c, r = self.find_wall(x, y, angle)
 
             # the closer away the wall, the brighter it will appear
@@ -44,8 +49,6 @@ class RayCaster:
             # ----------------- Debugging Modes ------------ -------------------------
             if TOPDOWN:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
-                angle += RAY_ANGLE
-                ray_count += 1
                 continue
             if PLAINWALL:
                 # Draw a very narrow vertical rectangle to represent the portion
@@ -59,8 +62,6 @@ class RayCaster:
                     self.game.screen, 
                     pygame.Color(brightness, brightness, brightness), 
                     (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height),2)
-                angle += RAY_ANGLE
-                ray_count += 1
                 continue
             # ----------------- End: Debugging Modes ---------------------------------
 
@@ -105,9 +106,6 @@ class RayCaster:
                 offset,
                 brightness)
  
-            angle += RAY_ANGLE
-            ray_count += 1
-
     def is_in_bounds(self, pos):
         if (pos[0] > SCREEN_WIDTH
         or pos[0] < 0
