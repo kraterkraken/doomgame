@@ -66,7 +66,7 @@ class RayCaster:
             # ----------------- End: Debugging Modes ---------------------------------
 
 
-            # We need to find how far (percentagewise) across the edge of the 
+            # We need to find how far (offset) across the edge of the 
             # tile that the ray hit.  There are 4 cases: (1) ray hit the left
             # of the tile, (2) ray hit the bottom of the tile, (3) ray hit
             # the right of the tile, and (4) ray hit the top of the tile.
