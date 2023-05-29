@@ -50,7 +50,7 @@ class RayCaster:
             if TOPDOWN:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
                 continue
-            if PLAINWALL:
+            if PLAINWALL: # or not (c == 6 and r == 1):
                 # Draw a very narrow vertical rectangle to represent the portion
                 # of the wall ("wall chunk") that the current ray hit.  The 
                 # farther away it is the shorter the wall chunk will be, which  

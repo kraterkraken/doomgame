@@ -8,28 +8,27 @@ class Graphics:
         self.textures = {}
         self.sprites = {}
 
-        # note: scaling MUST be done here, not in the game loop!  it is really slow!
-        texture = pygame.image.load("resources/textures/walltile2.jpg")
+        self.load_texture("brickwall", "resources/textures/walltile2.jpg")
+        self.load_texture("test", "resources/textures/test.png")
+
+    def load_texture(self, name, path):
+        texture = pygame.image.load(path)
         texture = texture.convert_alpha()
-        self.textures['brickwall'] = pygame.transform.scale(texture, (256, 256))
+        self.textures[name] = pygame.transform.scale(texture, (256, 256))
 
-
-    def draw_wall_chunk(self, texture_name, rect, offset, alpha_level):
+    def draw_wall_chunk(self, texture_name, rect, tile_offset, alpha_level):
         x, y, width, height = rect
+
+        percent = tile_offset / TILE_SIZE
+        texture_offset = int(percent * TEXTURE_SIZE)
+
+        if (texture_offset + WALL_CHUNK_WIDTH > TEXTURE_SIZE):
+            width = TEXTURE_SIZE - texture_offset
+
         chunk = self.textures[texture_name]
         chunk.set_alpha(alpha_level)
-        chunk = chunk.subsurface(offset, 0, width, TEXTURE_SIZE)
+        chunk = chunk.subsurface(texture_offset, 0, width, TEXTURE_SIZE)
         chunk = pygame.transform.scale(chunk, (width, height))
         self.game.screen.blit(chunk, (x, y))        
 
 
-    def test(self):
-        h = 200
-        y = 50
-        for i in range(50):
-            chunk = self.textures["brickwall"]
-            chunk = chunk.subsurface(i*WALL_CHUNK_WIDTH, 0, WALL_CHUNK_WIDTH, TEXTURE_SIZE)
-            chunk = pygame.transform.scale(chunk, (WALL_CHUNK_WIDTH, h))
-            self.game.screen.blit(chunk, (i*WALL_CHUNK_WIDTH,y))
-            h += 1
-            y -= 2
