@@ -24,7 +24,7 @@ class Player:
 
     def rotate(self, angle):
         self.heading = self.heading + angle
-        self.heading %= 2.0*math.pi # keep the angle within [0,2pi] so it doesn't get crazy big
+        wrap_angle(self.heading)
 
     def wall_collision(self):
         mypos = xy_to_cr(self.x, self.y)
