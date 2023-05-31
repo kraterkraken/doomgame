@@ -17,8 +17,8 @@ from Utility import *
 class Map:
 
     class MapSquare:
-        def __init__(self, row, col, kind, is_wall):
-            self.kind = kind
+        def __init__(self, row, col, tid, is_wall):
+            self.texture_id = tid
             self.row = row
             self.col = col
             self.x = col * TILE_SIZE
@@ -30,15 +30,15 @@ class Map:
         self.squares = {}
 
         self.map_string = \
-            "1111111111111111-"\
-            "1              1-"\
-            "1  1111    111 1-"\
-            "1     1      1 1-"\
-            "1  1111      1 1-"\
-            "1              1-"\
-            "1              1-"\
-            "1  1    1      1-"\
-            "1111111111111111"
+            "BBBBBBBBBGBBBBBB-"\
+            "B              B-"\
+            "B  BBBB    BBB B-"\
+            "B     G      B B-"\
+            "B  BBBB      B B-"\
+            "B              B-"\
+            "B              B-"\
+            "B  B    B      B-"\
+            "BBBBBBBBBBBBGBBB"
 
         if self.is_good_map():
             self.generate_map();
@@ -57,7 +57,7 @@ class Map:
 
     def is_in_wall(self, x, y):
         c, r = xy_to_cr(x, y)
-        return self.squares[c, r].is_wall
+        return self.squares[c, r].is_wall, c, r
 
     def draw(self):
         if TOPDOWN:
@@ -75,6 +75,6 @@ class Map:
     def generate_map(self):
         rows = self.map_string.split('-')
         for row, rowstring in enumerate(rows):
-            for col, kind in enumerate([ch for ch in rowstring]):
-                square = self.MapSquare(row, col, kind, (kind != ' '))
+            for col, tid in enumerate([ch for ch in rowstring]):
+                square = self.MapSquare(row, col, tid, (tid != ' '))
                 self.squares[(col, row)] = square
