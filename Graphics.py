@@ -19,7 +19,7 @@ class Graphics:
     def load_texture(self, name, tid, path):
         texture = pygame.image.load(path)
         texture = texture.convert_alpha()
-        self.textures[name] = pygame.transform.scale(texture, (256, 256))
+        self.textures[name] = pygame.transform.scale(texture, (TEXTURE_SIZE, TEXTURE_SIZE))
         self.texture_ids[tid] = name
 
     def draw_wall_chunk(self, texture_name, rect, tile_offset, alpha_level):

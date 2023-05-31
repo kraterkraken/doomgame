@@ -38,7 +38,7 @@ class Map:
             "B              B-"\
             "B              S-"\
             "B  P    P      B-"\
-            "BBBBPPPPBBBBGBBB"
+            "BBBPPPPPPBBBGBBB"
 
         if self.is_good_map():
             self.generate_map();
