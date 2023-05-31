@@ -7,19 +7,26 @@ class Graphics:
         self.game = game
         self.textures = {}
         self.sprites = {}
+        self.texture_ids = {}
 
-        self.load_texture("brickwall", "resources/textures/walltile2.jpg")
-        self.load_texture("test", "resources/textures/test.png")
+        self.load_texture("brickwall", "B", "resources/textures/walltile2.jpg")
+        self.load_texture("grate", "G", "resources/textures/rustygrate.jpg")
+        self.load_texture("test", "$", "resources/textures/test.png")
 
-    def load_texture(self, name, path):
+    def load_texture(self, name, tid, path):
         texture = pygame.image.load(path)
         texture = texture.convert_alpha()
         self.textures[name] = pygame.transform.scale(texture, (256, 256))
+        self.texture_ids[tid] = name
 
     def draw_wall_chunk(self, texture_name, rect, tile_offset, alpha_level):
+
+        if len(texture_name) == 1:
+            texture_name = self.texture_ids[texture_name]
+
         x, y, width, height = rect
 
-        percent = tile_offset / TILE_SIZE
+        percent = int(tile_offset) / TILE_SIZE
         texture_offset = int(percent * TEXTURE_SIZE)
 
         if (texture_offset + WALL_CHUNK_WIDTH > TEXTURE_SIZE):
