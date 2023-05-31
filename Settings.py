@@ -34,6 +34,11 @@ TILE_SIZE = SCREEN_WIDTH // ASPECT_RATIO[0]
 WALL_HEIGHT = TILE_SIZE
 VIEWER_DEPTH = (SCREEN_WIDTH / 2) / math.tan(HALF_FOV)
 
+# Math constants
+HALF_PI = math.pi/2
+HALF_3PI = 3*math.pi/2
+TWO_PI = 2*math.pi
+
 # sanity checks
 if TILE_SIZE*ASPECT_RATIO[1] != SCREEN_HEIGHT:
     print("Error: Aspect ratio doesn't match screen width and height.  Quitting.")
