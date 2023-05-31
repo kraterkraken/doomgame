@@ -11,6 +11,9 @@ class Graphics:
 
         self.load_texture("brickwall", "B", "resources/textures/walltile2.jpg")
         self.load_texture("grate", "G", "resources/textures/rustygrate.jpg")
+        self.load_texture("paintedbrick", "P", "resources/textures/wall_1.jpg")
+        self.load_texture("screampainting", "S", "resources/textures/scream.jpg")
+
         self.load_texture("test", "$", "resources/textures/test.png")
 
     def load_texture(self, name, tid, path):
