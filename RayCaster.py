@@ -87,7 +87,7 @@ class RayCaster:
 
             endx, endy, c, r, depth = self.find_wall(x, y, angle)
 
-            # the closer away the wall, the brighter it will appear
+            # the closer the wall, the brighter it will appear
             brightness = 255 - int(255 * depth/SCREEN_WIDTH)
 
             # un-fisheye the depth
@@ -152,10 +152,10 @@ class RayCaster:
                 # CASE 4 - top side of 2D tile
                 offset = Dx - endx
             else:
-                print("HUUUGE ERROR: Could not determine whihc side of tile a ray hit!!")
+                print("HUUUGE ERROR: Could not determine which side of tile a ray hit!!")
                 pass
 
-            texture_id = "B" #self.game.map.squares[c,r].texture_id
+            texture_id = self.game.map.squares[c,r].texture_id
             self.game.graphics.draw_wall_chunk(
                 texture_id, 
                 (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height), 
