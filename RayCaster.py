@@ -25,7 +25,7 @@ class RayCaster:
         cotangle = 1 / tanangle
         x_div_s = x / s # real col coord, i.e. 4.35 is 35% of the way across col #4
         y_div_s = y / s # real row coord, i.e. 3.22 is 22% of the way across row #3
-        pix = 1 / s  # the pct of a col or row that equals 1 pixel
+        pix = 1 / s  # the percentage of a col or row that equals 1 pixel
 
         # what tile are we in?
         c, r = xy_to_cr(x, y)
@@ -63,16 +63,16 @@ class RayCaster:
                 r2 += r_incr
 
         # pick the wall coords that are the smallest distance away
-        dist1 = depth(x_div_s, y_div_s, c1, r1)
-        dist2 = depth(x_div_s, y_div_s, c2, r2)
+        d1 = math.hypot(c1 - x_div_s, r1 - y_div_s)
+        d2 = math.hypot(c2 - x_div_s, r2 - y_div_s)
         answer = (c1, r1)
-        dist = dist1
-        if dist2 < dist1:
+        depth = d1
+        if d2 < d1:
             answer = (c2, r2)
-            dist = dist2
+            depth = d2
 
-        # return the x,y and c,r coords where we hit wall, and the depth to wall
-        return (answer[0]*s, answer[1]*s, int(answer[0]), int(answer[1]), dist*s)  
+        # return the x,y and c,r coords where we hit wall, and the depth to wall (in pixels)
+        return (answer[0]*s, answer[1]*s, int(answer[0]), int(answer[1]), depth*s)  
 
 
     def ray_cast(self, x, y, heading):
@@ -85,41 +85,38 @@ class RayCaster:
             angle += RAY_ANGLE
             ray_count += 1
 
+            # find where the ray hits a wall chunk
             endx, endy, c, r, depth = self.find_wall(x, y, angle)
 
-            # the closer the wall, the brighter it will appear
+            # the closer the wall chunk, the brighter it will appear
             brightness = 255 - int(255 * depth/SCREEN_WIDTH)
 
             # un-fisheye the depth
             depth = depth * math.cos(angle - heading)
 
-            # find the height of the projected the wall chunk on the viewscreen
+            # find the height of the projected wall chunk on the viewscreen
+            # (the farther away it is the shorter the wall chunk, for depth illusion)
             wall_height = int(WALL_HEIGHT * VIEWER_DEPTH / depth)
 
-            # here are the coordinates of the wall chunk
+            # here are the screen coordinates for drawing the wall chunk
+            # (shorter wall chunks are drawn lower on the screen)
             screen_x = int(ray_count * WALL_CHUNK_WIDTH)
             screen_y = int((SCREEN_HEIGHT - wall_height)/2)
 
 
-            # ----------------- Debugging Modes ------------ -------------------------
+            # ----------------- Start: Debugging Modes ------------ -------------------------
             if TOPDOWN:
                 pygame.draw.line(self.game.screen, "yellow", (x, y), (endx, endy), 2)
                 continue
-            if PLAINWALL: # or not (c == 6 and r == 0):
-                # Draw a very narrow vertical rectangle to represent the portion
-                # of the wall ("wall chunk") that the current ray hit.  The 
-                # farther away it is the shorter the wall chunk will be, which  
-                # will give the illusion of the entire wall receding if it is at  
-                # an angle to the player.  Assumption: player is ALWAYS looking  
-                # at the vertical center of any portion of any wall.
-
+            if PLAINWALL:
+                # Draw a very narrow vertical rectangle to represent the wall chunk
+                # that the current ray hit.
                 pygame.draw.rect(
                     self.game.screen, 
                     pygame.Color(brightness, brightness, brightness), 
                     (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height),2)
                 continue
             # ----------------- End: Debugging Modes ---------------------------------
-
 
             # We need to find how far (offset) across the edge of the 
             # tile that the ray hit.  There are 4 cases: (1) ray hit the left
