@@ -30,15 +30,27 @@ class Graphics:
         x, y, width, height = rect
 
         percent = int(tile_offset) / TILE_SIZE
-        texture_offset = int(percent * TEXTURE_SIZE)
+        texture_xoffset = int(percent * TEXTURE_SIZE)
+        texture_yoffset = 0
+        vert_pixels = TEXTURE_SIZE
+        scale_height = height
 
-        if (texture_offset + WALL_CHUNK_WIDTH > TEXTURE_SIZE):
-            width = TEXTURE_SIZE - texture_offset
+        if (texture_xoffset + WALL_CHUNK_WIDTH > TEXTURE_SIZE):
+            width = TEXTURE_SIZE - texture_xoffset
+
+        # --------- BEGIN performance enhancement for being close to wall
+        if height > SCREEN_HEIGHT:
+            vert_percent = SCREEN_HEIGHT / height
+            vert_pixels = int(vert_percent * TEXTURE_SIZE)
+            texture_yoffset = TEXTURE_SIZE * (1 - vert_percent) / 2
+            y = 0
+            scale_height = SCREEN_HEIGHT
+        # --------- END performance enhancement for being close to wall
 
         chunk = self.textures[texture_name]
         chunk.set_alpha(alpha_level)
-        chunk = chunk.subsurface(texture_offset, 0, width, TEXTURE_SIZE)
-        chunk = pygame.transform.scale(chunk, (width, height))
+        chunk = chunk.subsurface(texture_xoffset, texture_yoffset, width, vert_pixels)
+        chunk = pygame.transform.scale(chunk, (width, scale_height))
         self.game.screen.blit(chunk, (x, y))        
 
 
