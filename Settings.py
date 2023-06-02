@@ -16,6 +16,7 @@ PLAYER_VELOCITY = 0.4
 PLAYER_ANGULAR_VELOCITY = 0.003
 FOV = math.pi / 3
 TEXTURE_SIZE = 256
+PLAYER_RADIUS = 20
 
 # control settings
 MOVE_LEFT = pygame.K_a
