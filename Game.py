@@ -46,6 +46,9 @@ class Game:
 
         self.mouse_rel_x = min(self.mouse_rel_x, MOUSE_MAX_REL)
         self.mouse_rel_x = max(self.mouse_rel_x, -MOUSE_MAX_REL)
+        if abs(self.mouse_rel_x) <= 3:
+            self.mouse_rel_x = 0
+        print(f"mouse rel = {self.mouse_rel_x}")
         delta_x = self.mouse_rel_x * MOUSE_SENSITIVITY * self.delta_t
         self.player.rotate(delta_x)
 
