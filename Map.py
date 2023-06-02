@@ -55,10 +55,6 @@ class Map:
                 return False
         return True
 
-    def is_in_wall(self, x, y):
-        c, r = xy_to_cr(x, y)
-        return self.squares[c, r].is_wall, c, r
-
     def draw(self):
         if TOPDOWN:
             for square in self.squares.values():
