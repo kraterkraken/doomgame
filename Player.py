@@ -27,11 +27,17 @@ class Player:
         wrap_angle(self.heading)
 
     def wall_collision(self):
-        mypos = xy_to_cr(self.x, self.y)
-        return self.game.map.squares[mypos].is_wall
+        mypos1 = xy_to_cr(self.x, self.y+PLAYER_RADIUS)
+        mypos2 = xy_to_cr(self.x+PLAYER_RADIUS, self.y)
+        mypos3 = xy_to_cr(self.x-PLAYER_RADIUS, self.y)
+        mypos4 = xy_to_cr(self.x, self.y-PLAYER_RADIUS)
+        return (self.game.map.squares[mypos1].is_wall
+            or self.game.map.squares[mypos2].is_wall
+            or self.game.map.squares[mypos3].is_wall
+            or self.game.map.squares[mypos4].is_wall)
 
     def draw(self):
         if TOPDOWN:
-            pygame.draw.circle(self.game.screen, "white", (self.x, self.y), 7, 0)
+            pygame.draw.circle(self.game.screen, "white", (self.x, self.y), PLAYER_RADIUS, 0)
             line_end_x, line_end_y, depth, c, r = self.game.raycaster.find_wall(self.x, self.y, self.heading)
             pygame.draw.circle(self.game.screen, "green", (line_end_x, line_end_y), 7, 0)
