@@ -37,21 +37,27 @@ class Game:
             elif event.type == pygame.MOUSEMOTION:
                 mouse_x = event.pos[0]
                 self.mouse_rel_x  = event.rel[0]
+
+                # keep the mouse from going off the window (center it when it goes out of bounds)
                 if mouse_x < MOUSE_MIN_X or mouse_x > MOUSE_MAX_X:
-                    # keep the mouse from going off the window (center it when it goes out of bounds)
                     pygame.mouse.set_pos([SCREEN_WIDTH//2, SCREEN_HEIGHT//2])
 
     def update(self):
         self.delta_t = self.clock.tick(FRAME_RATE)  # limits FPS
 
+        # cap the rel(ative) mouse movement at MOUSE_MAX_REL
         self.mouse_rel_x = min(self.mouse_rel_x, MOUSE_MAX_REL)
         self.mouse_rel_x = max(self.mouse_rel_x, -MOUSE_MAX_REL)
+
+        # prevent the strange drifting I saw when holding the mouse still
         if abs(self.mouse_rel_x) <= 3:
             self.mouse_rel_x = 0
-        print(f"mouse rel = {self.mouse_rel_x}")
+
+        # rotate the player based on the rel(ative) mouse movement
         delta_x = self.mouse_rel_x * MOUSE_SENSITIVITY * self.delta_t
         self.player.rotate(delta_x)
 
+        # for the motion keys, figure out how for and in what direction to move the player
         distance = PLAYER_VELOCITY * self.delta_t
         a = distance * math.cos(self.player.heading)
         b = distance * math.sin(self.player.heading)
@@ -76,6 +82,9 @@ class Game:
         self.map.draw() # only does something in TOPDOWN mode
         self.player.draw() # only does something in TOPDOWN mode
         self.raycaster.ray_cast(self.player.x, self.player.y, self.player.heading)
+
+        # draw the aiming reticle
+        pygame.draw.circle(self.screen, "red", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), 6, 2)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
