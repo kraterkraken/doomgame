@@ -29,7 +29,7 @@ MOVE_AHEAD = pygame.K_w
 MOVE_BACK = pygame.K_s
 ROTATE_CC = pygame.K_LEFT
 ROTATE_C = pygame.K_RIGHT
-MOUSE_SENSITIVITY = 0.0003
+MOUSE_SENSITIVITY = 0.0002
 
 # constants ... don't change
 HALF_FOV = FOV / 2 # performance enhancement (less divisions)
