@@ -13,9 +13,12 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
+        pygame.mouse.set_visible(False)
+
+        # initialize the class
         self.delta_t = 1
         self.keys_pressed = {}
-
+        self.mouse_rel_x = 0
         self.running = True
         self.map = Map(self)
         self.player = Player(self)
@@ -32,11 +35,19 @@ class Game:
                 self.running = False # pygame.QUIT event means the user clicked X to close your window
 
             elif event.type == pygame.MOUSEMOTION:
-                delta_x = event.rel[0]
-                self.player.rotate(delta_x)
+                mouse_x = event.pos[0]
+                self.mouse_rel_x  = event.rel[0]
+                if mouse_x < MOUSE_MIN_X or mouse_x > MOUSE_MAX_X:
+                    # keep the mouse from going off the window (center it when it goes out of bounds)
+                    pygame.mouse.set_pos([SCREEN_WIDTH//2, SCREEN_HEIGHT//2])
 
     def update(self):
         self.delta_t = self.clock.tick(FRAME_RATE)  # limits FPS
+
+        self.mouse_rel_x = min(self.mouse_rel_x, MOUSE_MAX_REL)
+        self.mouse_rel_x = max(self.mouse_rel_x, -MOUSE_MAX_REL)
+        delta_x = self.mouse_rel_x * MOUSE_SENSITIVITY * self.delta_t
+        self.player.rotate(delta_x)
 
         distance = PLAYER_VELOCITY * self.delta_t
         a = distance * math.cos(self.player.heading)

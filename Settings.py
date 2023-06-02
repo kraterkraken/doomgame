@@ -17,6 +17,10 @@ PLAYER_ANGULAR_VELOCITY = 0.003
 FOV = math.pi / 3
 TEXTURE_SIZE = 256
 PLAYER_RADIUS = 20
+MOUSE_MAX_REL = 40
+MOUSE_MIN_X = 100
+MOUSE_MAX_X = SCREEN_WIDTH - MOUSE_MIN_X
+
 
 # control settings
 MOVE_LEFT = pygame.K_a
@@ -25,6 +29,7 @@ MOVE_AHEAD = pygame.K_w
 MOVE_BACK = pygame.K_s
 ROTATE_CC = pygame.K_LEFT
 ROTATE_C = pygame.K_RIGHT
+MOUSE_SENSITIVITY = 0.0003
 
 # constants ... don't change
 HALF_FOV = FOV / 2 # performance enhancement (less divisions)
