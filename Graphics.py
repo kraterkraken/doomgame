@@ -78,9 +78,14 @@ class Graphics:
         # --------- END performance enhancement for being close to wall
 
         chunk = self.textures[texture_name]
-        #chunk.set_alpha(alpha_level)
+        chunk.set_alpha(alpha_level)
         chunk = chunk.subsurface(texture_xoffset, texture_yoffset, width, vert_pixels)
         chunk = pygame.transform.scale(chunk, (width, scale_height))
+
+        # make a black rectangle underneath the wall texture to help with depth shading
+        pygame.draw.rect(self.game.screen, "black", 
+            (x, y, width, scale_height), 0)
+
         self.game.screen.blit(chunk, (x, y))        
 
 
