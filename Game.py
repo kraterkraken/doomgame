@@ -40,7 +40,7 @@ class Game:
 
                 # keep the mouse from going off the window (center it when it goes out of bounds)
                 if mouse_x < MOUSE_MIN_X or mouse_x > MOUSE_MAX_X:
-                    pygame.mouse.set_pos([SCREEN_WIDTH//2, SCREEN_HEIGHT//2])
+                    pygame.mouse.set_pos([SCREEN_MID_X, SCREEN_MID_Y])
 
     def update(self):
         self.delta_t = self.clock.tick(FRAME_RATE)  # limits FPS
@@ -57,7 +57,7 @@ class Game:
         delta_x = self.mouse_rel_x * MOUSE_SENSITIVITY * self.delta_t
         self.player.rotate(delta_x)
 
-        # for the motion keys, figure out how for and in what direction to move the player
+        # for the motion keys, figure out how far and in what direction to move the player
         distance = PLAYER_VELOCITY * self.delta_t
         a = distance * math.cos(self.player.heading)
         b = distance * math.sin(self.player.heading)
@@ -79,12 +79,15 @@ class Game:
 
     def render(self):
         self.screen.fill("black")
+
+        self.graphics.draw_floor()
+        self.graphics.draw_sky(self.player.heading)
         self.map.draw() # only does something in TOPDOWN mode
         self.player.draw() # only does something in TOPDOWN mode
         self.raycaster.ray_cast(self.player.x, self.player.y, self.player.heading)
 
         # draw the aiming reticle
-        pygame.draw.circle(self.screen, "red", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), 6, 2)
+        pygame.draw.circle(self.screen, "red", (SCREEN_MID_X, SCREEN_MID_Y), 6, 2)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
