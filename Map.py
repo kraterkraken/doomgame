@@ -32,9 +32,9 @@ class Map:
         self.map_string = \
             "BBBBBBBBBGBBBBBB-"\
             "B              B-"\
-            "B  BBBB    BBB B-"\
-            "B     G      B B-"\
-            "B  BBBB      B B-"\
+            "B  BBBB    PPP B-"\
+            "B     G      P B-"\
+            "B  BBBB      P B-"\
             "B              B-"\
             "B              S-"\
             "B  P    P      B-"\
