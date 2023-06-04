@@ -10,7 +10,7 @@ class Player:
         self.game = game
         self.x = PLAYER_START_X
         self.y = PLAYER_START_Y
-        self.heading = 5 * math.pi / 180 # angle in CLOCKWISE radians that player is facing
+        self.heading = PLAYER_START_HEADING # angle in CLOCKWISE radians that player is facing
 
     def move(self, delta_x, delta_y):
         # Moves the player in the x,y distances given (unless it makes us collide with a wall)
