@@ -3,7 +3,11 @@ from Settings import *
 
 
 def wrap_angle(angle):
-    return angle % (2.0*math.pi)
+    # force angle to be between 0 and 2pi
+    angle = angle % TWO_PI
+    if angle < 0:
+        angle += TWO_PI
+    return angle
 
 def xy_to_cr(x, y):
     # convert a map x-y coordinate into the 
