@@ -85,6 +85,8 @@ class Game:
         self.map.draw() # only does something in TOPDOWN mode
         self.player.draw() # only does something in TOPDOWN mode
         self.raycaster.ray_cast(self.player.x, self.player.y, self.player.heading)
+        self.graphics.prepare_sprite_rendering(self.player.x, self.player.y, self.player.heading)
+        self.graphics.draw()
 
         # draw the aiming reticle
         pygame.draw.circle(self.screen, "red", (SCREEN_MID_X, SCREEN_MID_Y), 6, 2)
