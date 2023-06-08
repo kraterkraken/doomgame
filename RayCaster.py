@@ -7,14 +7,6 @@ from Game import *
 
 class RayCaster:                                               
 
-    class WallChunk:
-        def __init__(self, x, y, height, width, depth):
-            self.x = x
-            self.y = y
-            self.height = height
-            self.width = width
-            self.depth = depth
-
     def __init__(self, game):
         self.game = game
 
@@ -79,6 +71,7 @@ class RayCaster:
 
         angle = heading - HALF_FOV - RAY_ANGLE
         ray_count = -1
+        self.game.graphics.reset_draw_list()
 
         while ray_count < NUM_RAYS:
 
@@ -153,11 +146,12 @@ class RayCaster:
                 pass
 
             texture_id = self.game.map.squares[c,r].texture_id
-            self.game.graphics.draw_wall_chunk(
+            drawable = self.game.graphics.store_wall_chunk(
                 texture_id, 
                 (screen_x, screen_y, WALL_CHUNK_WIDTH, wall_height), 
                 offset,
-                brightness)
+                brightness,
+                depth)
  
     def is_in_bounds_cr(self, c, r):
         return (int(c), int(r)) in self.game.map.squares
