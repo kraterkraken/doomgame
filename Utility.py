@@ -3,11 +3,21 @@ from Settings import *
 
 
 def wrap_angle(angle):
-    # force angle to be between 0 and 2pi
-    angle = angle % TWO_PI
+    # force angle to be between 0 and 360 degrees
+    angle = angle % DEG_360
     if angle < 0:
-        angle += TWO_PI
+        angle += DEG_360
     return angle
+
+def wrap_angle_180(angle):
+    # force angle to be between -180 and 180
+    angle = wrap_angle(angle)
+    if angle > DEG_180:
+        angle -= DEG_360
+    return angle
+
+def to_degrees(x):
+    return 360 * x / DEG_360
 
 def xy_to_cr(x, y):
     # convert a map x-y coordinate into the 
@@ -22,31 +32,31 @@ def get_cr_dir(angle):
     c_incr = 0
     r_incr = 0
 
-    if angle == 0 or angle == TWO_PI:
+    if angle == 0 or angle == DEG_360:
         # east
         c_incr = 1
-    elif angle == HALF_PI:
+    elif angle == DEG_90:
         # south
         r_incr = 1
-    elif angle == math.pi:
+    elif angle == DEG_180:
         # west
         c_incr = -1
-    elif angle == HALF_3PI:
+    elif angle == DEG_270:
         # north
         r_incr = -1
-    elif 0 < angle and angle < HALF_PI:
+    elif 0 < angle and angle < DEG_90:
         # south east
         c_incr = 1
         r_incr = 1
-    elif HALF_PI < angle and angle < math.pi:
+    elif DEG_90 < angle and angle < DEG_180:
         # south west
         c_incr = -1
         r_incr = 1
-    elif math.pi < angle and angle < HALF_3PI:
+    elif DEG_180 < angle and angle < DEG_270:
         # north west
         c_incr = -1
         r_incr = -1
-    elif HALF_3PI < angle and angle < TWO_PI:
+    elif DEG_270 < angle and angle < DEG_360:
         # north east
         c_incr = 1
         r_incr = -1
