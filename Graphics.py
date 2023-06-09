@@ -25,7 +25,7 @@ class Graphics:
         self.store_texture("paintedbrick",   "P", self.load_image("resources/textures/wall_1.jpg"))
         self.store_texture("screampainting", "S", self.load_image("resources/textures/scream.jpg"))
 
-        self.load_sprite("purplecolumn", "resources/sprites/HUPPB0.png", 1200, 350, 90)
+        self.load_sprite("purplecolumn", "resources/sprites/HUPPB0.png", 1000, 500, 90)
 
     def prepare_sprite_rendering(self, x, y, heading):
         for sprite in self.sprites:
