@@ -4,6 +4,7 @@ import math
 # debugging
 TOPDOWN = False # set to True to for topdown 2D view of entire map; False for standard 3D gameplay
 PLAINWALL = False # set to true to eliminate wall textures; False for standard 3D gameplay
+DISABLE_MOUSE = True # touchpad goes nuts when I'm debugging.  False makes it not do that.
 
 # Math constants
 HALF_PI = math.pi/2
@@ -56,3 +57,12 @@ SKY_PIX_PER_RADIAN = SKY_CIRCUM / TWO_PI
 if TILE_SIZE*ASPECT_RATIO[1] != SCREEN_HEIGHT:
     print("Error: Aspect ratio doesn't match screen width and height.  Quitting.")
     pygame.quit()
+
+# Working in radians is impossible for me so I'm 
+# using these degree constants.  It's still radians
+# but the constant names make more sense to my brain.
+DEG_90 = HALF_PI
+DEG_180 = math.pi
+DEG_270 = HALF_3PI
+DEG_360 = TWO_PI
+
