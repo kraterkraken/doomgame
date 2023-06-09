@@ -39,7 +39,8 @@ class Sprite:
         alpha = math.atan2(self.y - y, self.x - x)
         delta = wrap_angle_180(alpha - heading)
 
-        if abs(DEG_90 - abs(delta)) < 0.3:
+        if abs(DEG_90 - 0.3) < abs(delta):
+            # prevent drawing if delta is close to 90 or larger
             return 0,0,0,0,0,False
 
         pix_delta = VIEWER_DEPTH * math.tan(delta)
