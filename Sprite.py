@@ -1,6 +1,7 @@
 import pygame
 import math
 from Settings import *
+from Utility import *
 
 class Sprite:
     def __init__(self, path, x, y, height):
@@ -35,12 +36,12 @@ class Sprite:
             # don't need to draw it if you are withn its radius
             return 0,0,0,0,0,False
 
-        alpha = math.pi
-        if self.x != x:
-            # if we don't have to worry about division by zero (i.e., alpha isn't 90 degrees)
-            alpha = math.atan((self.y - y)/(self.x - x))
+        alpha = math.atan2(self.y - y, self.x - x)
+        delta = wrap_angle_180(alpha - heading)
 
-        delta = alpha - heading
+        if abs(DEG_90 - abs(delta)) < 0.3:
+            return 0,0,0,0,0,False
+
         pix_delta = VIEWER_DEPTH * math.tan(delta)
         screen_x = SCREEN_MID_X + pix_delta
 
