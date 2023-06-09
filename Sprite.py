@@ -16,8 +16,6 @@ class Sprite:
         self.HALF_HEIGHT = self.height // 2
         self.percent_offset = 1 - (HALF_WALL_HEIGHT / self.height)
 
-        print(self.height)
-
     def get_projection(self, x, y, heading):
         # Returns the apparent height and width of the sprite
         # from the vantage point of someone at the given x, y coordinates.
