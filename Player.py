@@ -17,12 +17,15 @@ class Player:
         self.x += delta_x
         self.y += delta_y
 
+        x_unit = -1 if delta_x < 0 else 1
+        y_unit = -1 if delta_y < 0 else 1
+
         if self.wall_collision_x():
             # undo the previous x movement if it puts us inside a wall
-            self.x -= delta_x
+            self.x -= delta_x + x_unit
         if self.wall_collision_y():
             # undo the previous y movement if it puts us inside a wall
-            self.y -= delta_y
+            self.y -= delta_y + y_unit
 
     def rotate(self, angle):
         self.heading = self.heading + angle
