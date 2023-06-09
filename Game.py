@@ -34,7 +34,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False # pygame.QUIT event means the user clicked X to close your window
 
-            elif event.type == pygame.MOUSEMOTION:
+            elif not DISABLE_MOUSE and event.type == pygame.MOUSEMOTION:
                 mouse_x = event.pos[0]
                 self.mouse_rel_x  = event.rel[0]
 
