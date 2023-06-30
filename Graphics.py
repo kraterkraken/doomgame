@@ -24,6 +24,7 @@ class Graphics:
         self.store_texture("grate",          "G", self.load_image("resources/textures/rustygrate.jpg"))
         self.store_texture("paintedbrick",   "P", self.load_image("resources/textures/wall_1.jpg"))
         self.store_texture("screampainting", "S", self.load_image("resources/textures/scream.jpg"))
+        self.store_texture("wallpaperdark ", "W", self.load_image("resources/textures/tvshowdark_wallpaper.png"))
 
         self.load_sprite("purplecolumn", "resources/sprites/HUPPB0.png", 1000, 500, 90)
 
