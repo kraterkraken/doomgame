@@ -30,7 +30,7 @@ class Map:
         self.squares = {}
 
         self.map_string = \
-            "BBBBBBBBBGBBBBBB-"\
+            "BWWWWWWWWGBBBBBB-"\
             "B              B-"\
             "B  BBBB    PPP B-"\
             "B     G      P B-"\
