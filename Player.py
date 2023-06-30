@@ -14,33 +14,27 @@ class Player:
 
     def move(self, delta_x, delta_y):
         # Moves the player in the x,y distances given (unless it makes us collide with a wall)
-        self.x += delta_x
-        self.y += delta_y
 
         x_unit = -1 if delta_x < 0 else 1
         y_unit = -1 if delta_y < 0 else 1
 
-        if self.wall_collision_x():
-            # undo the previous x movement if it puts us inside a wall
-            self.x -= delta_x + x_unit
-        if self.wall_collision_y():
-            # undo the previous y movement if it puts us inside a wall
-            self.y -= delta_y + y_unit
+        # move the player if we didn't collide with a wall ...
+        if not self.wall_collision_x(delta_x, x_unit):
+            self.x += delta_x
+        if not self.wall_collision_y(delta_y, y_unit):
+            self.y += delta_y
 
     def rotate(self, angle):
         self.heading = self.heading + angle
         wrap_angle(self.heading)
 
-    def wall_collision_x(self):
-        mypos1 = xy_to_cr(self.x+PLAYER_RADIUS, self.y)
-        mypos2 = xy_to_cr(self.x-PLAYER_RADIUS, self.y)
-        return (self.game.map.squares[mypos1].is_wall
-            or self.game.map.squares[mypos2].is_wall)
-    def wall_collision_y(self):
-        mypos1 = xy_to_cr(self.x, self.y+PLAYER_RADIUS)
-        mypos2 = xy_to_cr(self.x, self.y-PLAYER_RADIUS)
-        return (self.game.map.squares[mypos1].is_wall
-            or self.game.map.squares[mypos2].is_wall)
+    def wall_collision_x(self, delta_x, unit):
+        mypos1 = xy_to_cr(self.x+delta_x+(unit*PLAYER_RADIUS), self.y)
+        return self.game.map.squares[mypos1].is_wall
+
+    def wall_collision_y(self, delta_y, unit):
+        mypos1 = xy_to_cr(self.x, self.y+delta_y+(unit*PLAYER_RADIUS))
+        return self.game.map.squares[mypos1].is_wall
 
     def draw(self):
         if TOPDOWN:
